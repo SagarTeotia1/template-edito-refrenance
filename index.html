@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Template from link</title>
+<style>
+  :root {
+    --bg: #f6f5f2; --surface: #ffffff; --ink: #1b1b1f; --muted: #66666f; --line: #e2e0da;
+    --accent: #d6336c; --accent-ink: #ffffff; --ok: #1f8a4c; --bad: #c0392b; --warn-bg: #fff4d6; --warn-ink: #6b4e00;
+    --chip: #efede8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121214; --surface: #1b1b1f; --ink: #f1f0ee; --muted: #9a9aa4; --line: #2c2c33;
+      --accent: #ff5c93; --accent-ink: #1b0710; --ok: #4cc38a; --bad: #ff7a6b; --warn-bg: #3a2f10; --warn-ink: #f3d98b;
+      --chip: #26262c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121214; --surface: #1b1b1f; --ink: #f1f0ee; --muted: #9a9aa4; --line: #2c2c33;
+    --accent: #ff5c93; --accent-ink: #1b0710; --ok: #4cc38a; --bad: #ff7a6b; --warn-bg: #3a2f10; --warn-ink: #f3d98b;
+    --chip: #26262c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 12px; font-weight: 600; }
+  .lede { color: var(--muted); margin: 0 0 24px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 0 0 4px; }
+  input[type=text], input[type=url], input[type=email], input[type=password] {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); font: inherit;
+  }
+  input:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+  .row > .grow { flex: 1 1 220px; min-width: 0; }
+  .stack > * + * { margin-top: 12px; }
+  button { font: inherit; cursor: pointer; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 10px 14px; }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; font-weight: 600; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button.link { border: 0; background: none; color: var(--muted); padding: 4px 6px; text-decoration: underline; }
+  .pill { display: inline-block; font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--chip); color: var(--muted); }
+  .pill.ok { color: var(--ok); }
+  .banner { padding: 10px 12px; border-radius: 10px; background: var(--warn-bg); color: var(--warn-ink); margin-bottom: 14px; font-size: 14px; }
+  .error { color: var(--bad); margin: 10px 0 0; white-space: pre-wrap; }
+  .status { display: flex; align-items: center; gap: 10px; margin-top: 14px; color: var(--muted); }
+  .spin { width: 16px; height: 16px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spin { animation-duration: 3s; } }
+  .hint { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+  .tpl h3 { margin: 0; font-size: 18px; }
+  .tpl .summary { margin: 6px 0 12px; color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .chip { font-size: 12px; padding: 3px 9px; border-radius: 999px; background: var(--chip); }
+  .swatches { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+  .sw { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .sw i { width: 22px; height: 22px; border-radius: 6px; border: 1px solid var(--line); display: inline-block; }
+  details { margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+  pre { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px; overflow: auto; max-height: 280px; font-size: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .grid .card { margin: 0; padding: 14px; }
+  .grid h3 { font-size: 15px; margin: 0 0 4px; }
+  .grid .summary { font-size: 13px; color: var(--muted); margin: 0 0 6px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .probe { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); margin: 8px 0 0; background: var(--bg); }
+  .hidden { display: none !important; }
+  .who { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Template from a link</h1>
+  <p class="lede">Paste an Instagram, YouTube or Facebook video link. The backend reads the editing style of that video (colours, type, captions, pace) and saves it as a template.</p>
+
+  <div id="fileWarn" class="banner hidden">
+    This page is opened as a file, so the browser sends no usable origin and the API will block it. Open it through
+    <b>http://localhost:5180</b> instead (run <code>python -m http.server 5180</code> in this folder).
+  </div>
+
+  <section class="card" aria-labelledby="h-conn">
+    <h2 id="h-conn">1 · Backend</h2>
+    <div class="row">
+      <div class="grow">
+        <label for="base">API address</label>
+        <input id="base" type="url" value="https://api.trybroll.com" autocomplete="off" spellcheck="false">
+      </div>
+      <button type="button" id="useProd">api.trybroll.com</button>
+      <button type="button" id="useLocal">Local backend</button>
+      <span id="health" class="pill">not checked</span>
+    </div>
+    <p id="httpWarn" class="banner hidden" style="margin-top:12px">This address is not HTTPS. Your password would travel unencrypted. Use it only for a local backend.</p>
+
+    <div id="signedOut" class="stack" style="margin-top:16px">
+      <div class="row">
+        <div class="grow"><label for="email">Email</label><input id="email" type="email" autocomplete="username"></div>
+        <div class="grow"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password"></div>
+        <button type="button" class="primary" id="login">Sign in</button>
+      </div>
+      <p class="hint">Your password goes only to the API address above and is not stored. The session token lives in this tab only.</p>
+      <p id="loginErr" class="error hidden" role="alert"></p>
+    </div>
+    <div id="signedIn" class="who hidden" style="margin-top:16px">
+      <span>Signed in as <b id="whoName"></b></span>
+      <button type="button" class="link" id="logout">Sign out</button>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="h-make">
+    <h2 id="h-make">2 · Reference video</h2>
+    <form id="makeForm" class="stack">
+      <div>
+        <label for="url">Video link</label>
+        <input id="url" type="url" placeholder="https://www.instagram.com/reel/… or https://www.youtube.com/shorts/… or https://www.facebook.com/…" autocomplete="off" spellcheck="false" required>
+        <p id="platform" class="hint">Public reels / shorts work best. Private or login-only posts cannot be opened.</p>
+      </div>
+      <div class="row">
+        <div class="grow"><label for="name">Template name <span style="opacity:.7">(optional)</span></label><input id="name" type="text" maxlength="40" placeholder="Left empty, it is named after the look"></div>
+        <button type="submit" class="primary" id="go" disabled>Create template</button>
+      </div>
+    </form>
+    <div id="status" class="status hidden" role="status" aria-live="polite"><span class="spin"></span><span id="statusText"></span></div>
+    <p id="makeErr" class="error hidden" role="alert"></p>
+  </section>
+
+  <section id="resultWrap" class="hidden" aria-labelledby="h-res">
+    <h2 id="h-res">Template created</h2>
+    <div id="result"></div>
+  </section>
+
+  <section aria-labelledby="h-gal">
+    <div class="who" style="margin-bottom:12px"><h2 id="h-gal" style="margin:0">Templates in stock</h2><button type="button" class="link" id="refresh">Refresh</button></div>
+    <p id="galNote" class="hint">Sign in to see the templates.</p>
+    <div id="gallery" class="grid"></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (s) { return document.querySelector(s); };
+
+  // ---- storage (can throw in private windows: always wrapped) --------------------------------------------------
+  function sget(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }
+  function sset(k, v) { try { sessionStorage.setItem(k, v); } catch (e) { /* ignore */ } }
+  function sdel(k) { try { sessionStorage.removeItem(k); } catch (e) { /* ignore */ } }
+  function lget(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lset(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ignore */ } }
+
+  var PROD = "https://api.trybroll.com";
+  var LOCAL = "http://127.0.0.1:4100";
+  var state = { access: sget("tl.access"), refresh: sget("tl.refresh"), user: null, busy: false };
+  try { state.user = JSON.parse(sget("tl.user") || "null"); } catch (e) { state.user = null; }
+
+  function ApiError(status, message, data) { this.name = "ApiError"; this.status = status; this.message = message; this.data = data; }
+  ApiError.prototype = Object.create(Error.prototype);
+
+  function base() { return $("#base").value.trim().replace(/\/+$/, ""); }
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+  function messageOf(d, status) {
+    if (!d) return "The server answered HTTP " + status + ".";
+    if (typeof d.error === "string") return d.error;
+    if (typeof d.message === "string") return d.message;
+    if (typeof d.detail === "string") return d.detail;
+    if (d.details && typeof d.details.reason === "string") return d.details.reason;
+    return "The server answered HTTP " + status + ".";
+  }
+
+  // One request. `auth` adds the bearer token; a 401 is retried once after a token refresh.
+  async function api(path, opts, retried) {
+    opts = opts || {};
+    var headers = {};
+    if (opts.body !== undefined) headers["Content-Type"] = "application/json";
+    if (opts.auth !== false && state.access) headers["Authorization"] = "Bearer " + state.access;
+    var ctl = new AbortController();
+    var timer = setTimeout(function () { ctl.abort(); }, opts.timeout || 60000);
+    var res;
+    try {
+      res = await fetch(base() + path, {
+        method: opts.method || "GET", headers: headers, signal: ctl.signal,
+        body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined
+      });
+    } catch (e) {
+      throw new ApiError(0, e && e.name === "AbortError"
+        ? "The server took too long to answer."
+        : "Could not reach " + base() + ". Check the address, your connection, and that this page is opened from http://localhost (the API blocks other origins).");
+    } finally { clearTimeout(timer); }
+    if (res.status === 401 && opts.auth !== false && !retried && state.refresh) {
+      if (await tryRefresh()) return api(path, opts, true);
+    }
+    if (opts.blob && res.ok) return res.blob();   // a picture: the same request, the body kept as a Blob
+    var text = await res.text(), data = null;
+    try { data = text ? JSON.parse(text) : null; } catch (e) { data = { raw: text.slice(0, 300) }; }
+    if (!res.ok) throw new ApiError(res.status, messageOf(data, res.status), data);
+    return data;
+  }
+
+  // A picture from the API. <img> cannot send the bearer token, so it is fetched here and shown from an object URL.
+  function apiBlob(path) { return api(path, { blob: true }); }
+
+  async function tryRefresh() {
+    try {
+      var d = await api("/auth/refresh", { method: "POST", body: { refreshToken: state.refresh }, auth: false });
+      if (d && d.accessToken) { setSession(d.accessToken, d.refreshToken || state.refresh, state.user); return true; }
+    } catch (e) { /* fall through */ }
+    clearSession();
+    return false;
+  }
+
+  // ---- session ------------------------------------------------------------------------------------------------
+  function setSession(access, refresh, user) {
+    state.access = access; state.refresh = refresh; state.user = user || state.user;
+    sset("tl.access", access || ""); sset("tl.refresh", refresh || "");
+    sset("tl.user", JSON.stringify(state.user || null));
+    sset("tl.sbase", base());   // the session belongs to this address only
+    paintSession();
+  }
+  function clearSession() {
+    state.access = state.refresh = null; state.user = null;
+    sdel("tl.access"); sdel("tl.refresh"); sdel("tl.user"); sdel("tl.sbase");
+    paintSession();
+  }
+  function paintSession() {
+    var on = !!state.access;
+    $("#signedOut").classList.toggle("hidden", on);
+    $("#signedIn").classList.toggle("hidden", !on);
+    $("#whoName").textContent = on ? ((state.user && (state.user.email || state.user.name)) || "your account") : "";
+    $("#go").disabled = !on || state.busy;
+    $("#galNote").classList.toggle("hidden", on);
+    if (!on) { revokeAll(galleryUrls); $("#gallery").replaceChildren(); }
+  }
+
+  // ---- backend check ------------------------------------------------------------------------------------------
+  var healthSeq = 0;   // only the newest check may paint: a slow answer from an address you left must not overwrite the current one
+  async function checkHealth() {
+    var my = ++healthSeq, pill = $("#health");
+    pill.className = "pill"; pill.textContent = "checking…";
+    var b = base();
+    $("#httpWarn").classList.toggle("hidden", /^https:/i.test(b) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(b));
+    try {
+      var h = await api("/health", { auth: false, timeout: 10000 });
+      if (my !== healthSeq) return;
+      pill.className = "pill ok";
+      pill.textContent = h && h.ok ? "online" + (h.accounts ? " · " + h.accounts : "") : "answers, but not healthy";
+    } catch (e) {
+      if (my !== healthSeq) return;
+      pill.className = "pill"; pill.textContent = "unreachable";
+    }
+  }
+
+  async function login() {
+    var err = $("#loginErr"); err.classList.add("hidden");
+    var email = $("#email").value.trim(), password = $("#password").value;
+    if (!email || !password) { err.textContent = "Enter your email and password."; err.classList.remove("hidden"); return; }
+    $("#login").disabled = true;
+    try {
+      var d = await api("/auth/login", { method: "POST", body: { email: email, password: password }, auth: false });
+      $("#password").value = "";
+      if (!d || !d.accessToken) throw new ApiError(0, "The server did not return a session. This account may need the email-code sign-in, which this page does not support.");
+      setSession(d.accessToken, d.refreshToken, d.user);
+      lset("tl.base", base());
+      loadGallery();
+    } catch (e) {
+      err.textContent = e.message || "Sign-in failed."; err.classList.remove("hidden");
+    } finally { $("#login").disabled = false; }
+  }
+
+  // ---- link helpers -------------------------------------------------------------------------------------------
+  function platformOf(u) {
+    var h = "";
+    try { h = new URL(u).hostname.toLowerCase(); } catch (e) { return ""; }
+    if (/(^|\.)instagram\.com$|(^|\.)instagr\.am$/.test(h)) return "Instagram";
+    if (/(^|\.)youtube\.com$|(^|\.)youtu\.be$/.test(h)) return "YouTube";
+    if (/(^|\.)facebook\.com$|(^|\.)fb\.watch$|(^|\.)fb\.com$/.test(h)) return "Facebook";
+    return "Other site";
+  }
+  function paintPlatform() {
+    var u = $("#url").value.trim(), p = u ? platformOf(u) : "";
+    $("#platform").textContent = !u ? "Public reels / shorts work best. Private or login-only posts cannot be opened."
+      : p ? p + " link. Only the first ~80 seconds are fetched, and nothing of the video is kept: only the template."
+      : "That does not look like a web address.";
+  }
+
+  // ---- create -------------------------------------------------------------------------------------------------
+  function status(text) { $("#status").classList.toggle("hidden", !text); $("#statusText").textContent = text || ""; }
+  function makeError(text) { var e = $("#makeErr"); e.textContent = text || ""; e.classList.toggle("hidden", !text); }
+
+  function cleanName(n) { return n.replace(/["“”'\n\r.]/g, " ").replace(/\s+/g, " ").trim().slice(0, 40); }
+
+  async function newestTemplate(sinceMs, hintName) {
+    var list = (await api("/styles?limit=200")).items || [];
+    if (hintName) {
+      var m = list.find(function (t) { return t.name === hintName; });
+      if (m) return m;
+    }
+    return list.filter(function (t) { return Date.parse(t.created) >= sinceMs - 120000; })[0] || list[0] || null;
+  }
+
+  async function create(url, name) {
+    var started = Date.now();
+    status("Checking the link…");
+    var project = (await api("/projects", { method: "POST", body: {} })).id;
+    var prompt = name ? "Save this style as " + name : "Make a template from this reference link";
+    var job;
+    try {
+      job = await api("/chat/jobs", { method: "POST", body: { projectId: project, prompt: prompt, videoIds: [], referenceUrl: url }, timeout: 60000 });
+    } catch (e) {
+      // This link was read before: its template is already in the stock, and the style route returns it at once.
+      if (e.status === 400 && /add the video/i.test(e.message)) {
+        status("This link was read before. Fetching its template…");
+        return await api("/styles", { method: "POST", body: { url: url, name: name }, timeout: 180000 });
+      }
+      throw e;
+    }
+    var deadline = Date.now() + 10 * 60 * 1000, last = "";
+    while (Date.now() < deadline) {
+      await sleep(2500);
+      var j = await api("/chat/jobs/" + encodeURIComponent(job.id));
+      var line = (j.message || "Working…") + " · " + Math.round((Date.now() - started) / 1000) + "s";
+      if (line !== last) { status(line); last = line; }
+      if (j.state === "failed" || j.state === "cancelled") throw new ApiError(0, j.error || "The template could not be made.");
+      if (j.state === "complete") {
+        var reply = String(j.reply || ""), mm = reply.match(/Saved the template "([^"]+)"/);
+        var t = await newestTemplate(started, mm ? mm[1] : name);
+        if (t) return t;
+        throw new ApiError(0, "The template was saved, but could not be found in the list. " + reply);
+      }
+    }
+    throw new ApiError(0, "This is taking too long (over 10 minutes). Check the job in the backend.");
+  }
+
+  // ---- drawing (text only: nothing from the server is ever put in as HTML) --------------------------------------
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; }
+  var HEX = /^#[0-9a-f]{6}$/i;
+
+  // Object URLs of the pictures on a card. The caller keeps one list per place the cards go (gallery, result) and
+  // revokes it when those cards are replaced, so no picture stays in memory after it is gone.
+  var galleryUrls = [], resultUrls = [];
+  function revokeAll(list) { while (list.length) { try { URL.revokeObjectURL(list.pop()); } catch (e) { /* ignore */ } } }
+
+  function probeImage(t, urls) {
+    var img = el("img", "probe");
+    img.alt = "The look as the reference check drew it";
+    apiBlob("/styles/" + encodeURIComponent(t.id) + "/probe.jpg").then(function (blob) {
+      if (!img.isConnected) return;          // the card was replaced while the picture was on its way
+      var u = URL.createObjectURL(blob); urls.push(u); img.src = u;
+    }).catch(function () { img.remove(); });
+    return img;
+  }
+
+  function templateCard(t, compact, urls) {
+    var card = el("div", compact ? "card" : "card tpl");
+    card.appendChild(el(compact ? "h3" : "h3", "", t.name || "Untitled template"));
+    var sum = t.summary || t.description || "";
+    if (sum) card.appendChild(el("p", "summary", sum));
+
+    // caption colours: every one the look rotates through (texts), or the single text colour for an older template
+    var sw = el("div", "swatches"), c = t.colours || {};
+    var caps = (Array.isArray(c.texts) && c.texts.length ? c.texts : [c.text]).filter(function (h) { return typeof h === "string" && HEX.test(h); });
+    [["background", c.a], ["calm", c.b]].concat(caps.map(function (h, n) { return [caps.length > 1 ? "caption " + (n + 1) : "caption", h]; }))
+      .forEach(function (p) {
+        if (typeof p[1] === "string" && HEX.test(p[1])) {
+          var s = el("span", "sw"), i = el("i"); i.style.background = p[1];
+          s.appendChild(i); s.appendChild(document.createTextNode(p[0] + " " + p[1])); sw.appendChild(s);
+        }
+      });
+    if (sw.childNodes.length) card.appendChild(sw);
+
+    var chips = el("div", "chips"), f = t.fonts || {}, cap = t.caption || {};
+    function chip(x) { if (x) chips.appendChild(el("span", "chip", x)); }
+    chip(t.tone && "tone: " + t.tone);
+    chip(t.speaker && "speaker: " + t.speaker);
+    chip(typeof t.scene_sec === "number" && "scene ≈ " + t.scene_sec + "s");
+    chip(f.big && "type: " + f.big + (f.small && f.small !== "same_as_big" ? " + " + f.small : ""));
+    chip(f.slant === "italic" && "italic");
+    chip(f.width === "wide" && "wide");
+    chip(t.upper === true && "CAPITALS");
+    chip(cap.words && cap.words + " words on screen");
+    chip(cap.placement && "captions: " + cap.placement);
+    chip(cap.treatment && cap.treatment !== "plain" && cap.treatment);   // glow / outline / shadow
+    chip(cap.motion && "motion: " + cap.motion);
+    (t.lockups || []).forEach(function (x) { chip("lockup: " + x); });
+    (t.transitions || []).forEach(function (x) { chip("transition: " + x); });
+    if ((t.components || []).length) chip(t.components.length + " graphic(s)");
+    if (chips.childNodes.length) card.appendChild(chips);
+
+    var lp = t.loop;
+    if (lp && typeof lp.best_overall === "number") {
+      var n = typeof lp.rounds === "number" ? lp.rounds : 0;
+      card.appendChild(el("p", "hint", "Style check: matched the reference " + lp.best_overall + "/10 after " + n + " round" + (n === 1 ? "" : "s")));
+    }
+    if (t.hasProbe && urls) card.appendChild(probeImage(t, urls));
+
+    if (!compact) {
+      var d = el("details"); d.appendChild(el("summary", "", "Raw template data"));
+      d.appendChild(el("pre", "", JSON.stringify(t, null, 2))); card.appendChild(d);
+    }
+    return card;
+  }
+
+  async function loadGallery() {
+    if (!state.access) return;
+    var g = $("#gallery");
+    try {
+      var items = (await api("/styles?limit=200")).items || [];
+      revokeAll(galleryUrls);
+      g.replaceChildren.apply(g, items.map(function (t) { return templateCard(t, true, galleryUrls); }));
+      $("#galNote").classList.toggle("hidden", items.length > 0);
+      $("#galNote").textContent = items.length ? "" : "No templates yet. The first one you create will show here.";
+    } catch (e) { $("#galNote").classList.remove("hidden"); $("#galNote").textContent = "Could not load templates: " + e.message; }
+  }
+
+  // ---- wiring -------------------------------------------------------------------------------------------------
+  $("#makeForm").addEventListener("submit", async function (ev) {
+    ev.preventDefault();
+    if (state.busy || !state.access) return;
+    var url = $("#url").value.trim();
+    if (!platformOf(url)) { makeError("Paste the full video address (https://…)."); return; }
+    makeError(""); $("#resultWrap").classList.add("hidden");
+    state.busy = true; $("#go").disabled = true;
+    try {
+      var t = await create(url, cleanName($("#name").value));
+      status("");
+      revokeAll(resultUrls);
+      $("#result").replaceChildren(templateCard(t, false, resultUrls));
+      $("#resultWrap").classList.remove("hidden");
+      loadGallery();
+    } catch (e) {
+      status(""); makeError(e.message || "Something went wrong.");
+      if (e.status === 401) clearSession();
+    } finally { state.busy = false; paintSession(); }
+  });
+
+  $("#login").addEventListener("click", login);
+  $("#password").addEventListener("keydown", function (e) { if (e.key === "Enter") login(); });
+  $("#logout").addEventListener("click", function () { clearSession(); });
+  $("#useProd").addEventListener("click", function () { $("#base").value = PROD; onBaseChange(); });
+  $("#useLocal").addEventListener("click", function () { $("#base").value = LOCAL; onBaseChange(); });
+  $("#base").addEventListener("change", onBaseChange);
+  $("#url").addEventListener("input", paintPlatform);
+  $("#refresh").addEventListener("click", loadGallery);
+
+  function onBaseChange() {
+    clearSession();            // a token belongs to one backend: never send it to another address
+    lset("tl.base", base());
+    checkHealth();
+  }
+
+  if (location.protocol === "file:") $("#fileWarn").classList.remove("hidden");
+  var saved = lget("tl.base");
+  if (saved) $("#base").value = saved;
+  if (state.access && sget("tl.sbase") !== base()) clearSession();   // a token is never replayed against another address
+  paintSession(); paintPlatform(); checkHealth();
+  if (state.access) loadGallery();
+})();
+</script>
+</body>
+</html>
